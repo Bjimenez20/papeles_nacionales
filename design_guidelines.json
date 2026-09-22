@@ -1,0 +1,81 @@
+{
+  "theme": "light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "typography": {
+    "headings_font": "Cabinet Grotesk",
+    "body_font": "IBM Plex Sans",
+    "scale": {
+      "h1": "text-4xl sm:text-5xl tracking-tight font-bold",
+      "h2": "text-2xl sm:text-3xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm tracking-wide"
+    }
+  },
+  "colors": {
+    "background": "#FFFFFF",
+    "surface": "#FAFAFA",
+    "surface_elevated": "#FFFFFF",
+    "border": "#E4E4E7",
+    "primary": "#002FA7",
+    "primary_foreground": "#FFFFFF",
+    "accent_red": "#FF2A00",
+    "accent_yellow": "#FFC300",
+    "text_main": "#09090B",
+    "text_muted": "#71717A",
+    "gantt_bar_original": "#002FA7",
+    "gantt_bar_modified": "#FF2A00",
+    "gantt_bar_completed": "#18181B"
+  },
+  "layout": {
+    "spacing_scale": "Generous (p-6, p-8, gap-6)",
+    "grid_strategy": "Control Room Grid (Dense, Data Correlation) for Dashboard. F-Pattern Information Architecture. F-pattern means top-left quadrant has key metric.",
+    "border_radius": "max 8px (rounded-md or rounded-lg) for crisp edges.",
+    "shadows": "Minimal. Rely on 1px solid borders rather than soft shadows."
+  },
+  "components": {
+    "cards": "Flat background, 1px subtle border, no shadow. Hover: slight lift (-translate-y-1) and shadow-sm.",
+    "buttons": "Sharp, high contrast. Primary button is International Klein Blue (#002FA7). Action buttons use pure black or white.",
+    "tables": "Shadcn Table. Left-aligned text. Generous row padding.",
+    "modals": "Glassmorphism backdrop (bg-black/60 backdrop-blur-xl). Solid white modal surface with 1px border.",
+    "gantt_chart": "Custom built using Tailwind Flexbox or CSS Grid. Progressive disclosure: don't overload, use tabs to switch between 'Original' and 'Modificado'. Use overlapping bars to show comparison.",
+    "forms": "Shadcn Form, Input, Select. Stacked labels."
+  },
+  "specific_views": {
+    "dashboard": "Bento Grid pattern. Top-left metric: Total Delays / Project Health. Progressive disclosure for Gantt (don't overload, use a tab or modal to expand).",
+    "activities_crud": "Table view with 'Nueva Actividad' modal. Modal contains Nombre, Duración (días), and multi-select for Predecesores.",
+    "incidents_crud": "Table view per activity or global. Modal to register Incident (Razón, Impedimento, Retraso en días).",
+    "gantt_view": "Horizontal timeline. Left column: Nombres de actividades. Right area: Time axis with horizontal colored bars. Support visual comparison."
+  },
+  "media": {
+    "image_urls": [
+      {
+        "url": "https://images.unsplash.com/photo-1625821189600-07e3e9185967?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMG1pbmltYWwlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTAzODA1fDA&ixlib=rb-4.1.0&q=85",
+        "category": "empty_state",
+        "description": "White concrete blocks in grayscale photography, used for empty states"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1747727568150-444573cd705a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMG1pbmltYWwlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTAzODA1fDA&ixlib=rb-4.1.0&q=85",
+        "category": "auth_background",
+        "description": "Architectural details with a bright blue sky, used for auth layout side panel"
+      }
+    ]
+  },
+  "motion": {
+    "hover": "Hover states on all interactive elements. Explicit text color on hover.",
+    "transitions": "Use transition-all duration-200 ease-in-out for buttons and list items."
+  },
+  "accessibility": {
+    "contrast": "Ensure text contrast against background. Focus states must have ring-2 ring-primary ring-offset-2.",
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute (e.g., data-testid='add-activity-btn')."
+  },
+  "instructions_to_main_agent": [
+    "Language: Spanish for all UI text.",
+    "Install 'Cabinet Grotesk' and 'IBM Plex Sans' via Google Fonts or standard imports.",
+    "Build the Gantt chart using custom HTML/Tailwind grids. Do not rely on complex external Gantt libraries if they are hard to customize; a flex/grid based bar chart is sufficient and more aligned with the Swiss design.",
+    "For the original vs modified Gantt, overlay a red bar (modified) over or below the blue bar (original) to easily compare the delay.",
+    "Activity dates must auto-calculate based on predecessor chain: Start = max(predecessor_end) + 1. If no predecessor, Start = Day 1.",
+    "Incidents add delays to the specific activity, which cascades to all successors."
+  ]
+}
