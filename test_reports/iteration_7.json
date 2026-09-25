@@ -1,0 +1,28 @@
+{
+  "summary": "Verified SRV file-attachment fix end-to-end. FileDropzone now uploads real files to POST /api/upload during the wizard (thumbnail visible in file-list during creation), and the new SolicitudView 'Archivos adjuntos' card displays the uploaded image as a clickable thumbnail on /solicitud/{codigo}. Persistence after full reload confirmed (image URL pointing to /api/files/... is re-rendered from the persisted path). 'Enlace de seguimiento' card + copy-track-button present. Admin status update (estado-select, estado-comentario, registrar-estado) records new entry in historial. Backend regression: /api/upload and /api/public/upload accept PNG and PDF (<=10MB) and reject text/plain with 400 'Solo se permiten imágenes o PDF'.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Success modal on /nueva-solicitud", "issues": ["Radix warning: DialogContent requires a DialogTitle for accessibility (screen readers). Add a visually-hidden DialogTitle."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py"],
+  "action_items": [
+    "(Minor a11y) Add a DialogTitle (or VisuallyHidden wrapper) inside the success-modal DialogContent in NuevaSolicitud.js to silence Radix a11y warning."
+  ],
+  "critical_code_review_comments": [
+    "FileDropzone uploads files sequentially in a for-loop; consider Promise.all for parallel uploads of many files.",
+    "SolicitudView.js still duplicates flowIndex / fmt helpers found in RequestDetail.js — extract to shared util (carry-over from iteration 6).",
+    "FileDropzone type detection stores raw MIME as `type` but the fallback branch stores the file extension string — a bit inconsistent; isImg handles both but a normalized {mime,ext} shape would be cleaner."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "carlos.mesia.22@gmail.com / Admin123! (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Created SRV-2026-000123 (Instalación, GrandBay, Bogotá – Planta Principal) with 1 PNG attachment for verification. Data lives in localStorage (mocked) but the uploaded image is persisted in backend object storage at qr-asset-desk/uploads/*.png.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Wizard testids: btn-siguiente, btn-crear, btn-ver, select-cliente, select-ubicacion, input-contacto, input-telefono, input-fecha, select-horario, input-cantidad, select-dispensador, file-dropzone, file-input, file-list, file-remove-{i}. SolicitudView testids: solicitud-view, view-codigo, estado-badge, archivos-card, archivo-{i}, copy-track-button, estado-select, estado-comentario, registrar-estado, historial. To upload use page.set_input_files on [data-testid=file-input] (hidden). Backend upload endpoints validated: /api/upload (auth) and /api/public/upload (public) — accept image/pdf, reject others with 400.",
+  "rca of the issue": "Root cause was FileDropzone previously only stored file metadata client-side, never POSTing to /api/upload; so archivos in the created solicitud had no `path` and SolicitudView had no card to render. Fix (already applied by main agent) uploads each file via ensureSession()+api.post('/upload'), stores the returned server path in form.archivos, and SolicitudView renders an <img src={fileUrl(path)}/> thumbnail inside archivos-card. Verified thumbnails render in the wizard AND on /solicitud/{codigo}, and survive a full page reload."
+}

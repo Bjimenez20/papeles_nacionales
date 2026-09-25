@@ -1,81 +1,88 @@
 {
-  "theme": "light",
-  "archetype": "4 (Swiss & High-Contrast)",
+  "theme": {
+    "type": "light_with_dark_sidebar",
+    "primary_color": "#002699",
+    "primary_hover": "#001f80",
+    "primary_light": "#e6ecff",
+    "sidebar_bg": "#0f172a",
+    "sidebar_text": "#94a3b8",
+    "sidebar_active": "#ffffff",
+    "page_bg": "#f8fafc",
+    "card_bg": "#ffffff",
+    "border_color": "#e2e8f0"
+  },
   "typography": {
-    "headings_font": "Cabinet Grotesk",
-    "body_font": "IBM Plex Sans",
-    "scale": {
-      "h1": "text-4xl sm:text-5xl tracking-tight font-bold",
-      "h2": "text-2xl sm:text-3xl tracking-tight font-semibold",
-      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
-      "h4": "text-lg sm:text-xl font-medium",
-      "body": "text-base leading-relaxed",
-      "small": "text-sm tracking-wide"
+    "font_family_headings": "Outfit, sans-serif",
+    "font_family_body": "Plus Jakarta Sans, sans-serif",
+    "font_family_mono": "JetBrains Mono, monospace",
+    "font_import_url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+    "hierarchy": {
+      "h1": "text-2xl md:text-3xl font-bold tracking-tight text-slate-900",
+      "h2": "text-xl md:text-2xl font-semibold text-slate-900",
+      "h3": "text-lg font-semibold text-slate-800",
+      "subtitle": "text-sm text-slate-500 font-normal",
+      "body": "text-sm text-slate-600 leading-relaxed",
+      "badge": "text-xs font-semibold px-2.5 py-1 rounded-full border inline-flex items-center gap-1.5"
     }
   },
-  "colors": {
-    "background": "#FFFFFF",
-    "surface": "#FAFAFA",
-    "surface_elevated": "#FFFFFF",
-    "border": "#E4E4E7",
-    "primary": "#002FA7",
-    "primary_foreground": "#FFFFFF",
-    "accent_red": "#FF2A00",
-    "accent_yellow": "#FFC300",
-    "text_main": "#09090B",
-    "text_muted": "#71717A",
-    "gantt_bar_original": "#002FA7",
-    "gantt_bar_modified": "#FF2A00",
-    "gantt_bar_completed": "#18181B"
+  "status_badges": {
+    "asset_status": {
+      "Operativo": "bg-emerald-50 text-emerald-700 border-emerald-200 icon-dot-emerald-500",
+      "Con incidencia": "bg-amber-50 text-amber-700 border-amber-200 icon-dot-amber-500",
+      "En mantenimiento": "bg-blue-50 text-blue-700 border-blue-200 icon-dot-blue-500",
+      "Inactivo": "bg-slate-100 text-slate-600 border-slate-200 icon-dot-slate-400"
+    },
+    "request_status": {
+      "NUEVA": "bg-purple-50 text-purple-700 border-purple-200",
+      "EN REVISIÓN": "bg-amber-50 text-amber-700 border-amber-200",
+      "EN PROCESO": "bg-blue-50 text-blue-700 border-blue-200",
+      "FINALIZADA": "bg-emerald-50 text-emerald-700 border-emerald-200"
+    },
+    "user_roles": {
+      "ADMINISTRADOR": "bg-indigo-50 text-indigo-700 border-indigo-200",
+      "USUARIO": "bg-slate-100 text-slate-700 border-slate-200"
+    }
   },
-  "layout": {
-    "spacing_scale": "Generous (p-6, p-8, gap-6)",
-    "grid_strategy": "Control Room Grid (Dense, Data Correlation) for Dashboard. F-Pattern Information Architecture. F-pattern means top-left quadrant has key metric.",
-    "border_radius": "max 8px (rounded-md or rounded-lg) for crisp edges.",
-    "shadows": "Minimal. Rely on 1px solid borders rather than soft shadows."
+  "layout_structure": {
+    "authenticated": {
+      "type": "sidebar_layout",
+      "sidebar_width": "w-64",
+      "collapsible_mobile": true,
+      "navigation_links": [
+        {"name": "Dashboard", "path": "/dashboard", "icon": "LayoutDashboard"},
+        {"name": "Activos", "path": "/assets", "icon": "Box"},
+        {"name": "Solicitudes", "path": "/requests", "icon": "ClipboardList"},
+        {"name": "Usuarios", "path": "/users", "icon": "Users", "admin_only": true}
+      ]
+    },
+    "public": {
+      "type": "centered_card_or_hero",
+      "max_width": "max-w-2xl",
+      "header": "Clean navbar with logo and back button or action button"
+    }
   },
-  "components": {
-    "cards": "Flat background, 1px subtle border, no shadow. Hover: slight lift (-translate-y-1) and shadow-sm.",
-    "buttons": "Sharp, high contrast. Primary button is International Klein Blue (#002FA7). Action buttons use pure black or white.",
-    "tables": "Shadcn Table. Left-aligned text. Generous row padding.",
-    "modals": "Glassmorphism backdrop (bg-black/60 backdrop-blur-xl). Solid white modal surface with 1px border.",
-    "gantt_chart": "Custom built using Tailwind Flexbox or CSS Grid. Progressive disclosure: don't overload, use tabs to switch between 'Original' and 'Modificado'. Use overlapping bars to show comparison.",
-    "forms": "Shadcn Form, Input, Select. Stacked labels."
-  },
-  "specific_views": {
-    "dashboard": "Bento Grid pattern. Top-left metric: Total Delays / Project Health. Progressive disclosure for Gantt (don't overload, use a tab or modal to expand).",
-    "activities_crud": "Table view with 'Nueva Actividad' modal. Modal contains Nombre, Duración (días), and multi-select for Predecesores.",
-    "incidents_crud": "Table view per activity or global. Modal to register Incident (Razón, Impedimento, Retraso en días).",
-    "gantt_view": "Horizontal timeline. Left column: Nombres de actividades. Right area: Time axis with horizontal colored bars. Support visual comparison."
-  },
-  "media": {
-    "image_urls": [
-      {
-        "url": "https://images.unsplash.com/photo-1625821189600-07e3e9185967?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMG1pbmltYWwlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTAzODA1fDA&ixlib=rb-4.1.0&q=85",
-        "category": "empty_state",
-        "description": "White concrete blocks in grayscale photography, used for empty states"
-      },
-      {
-        "url": "https://images.unsplash.com/photo-1747727568150-444573cd705a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMG1pbmltYWwlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzc4MTAzODA1fDA&ixlib=rb-4.1.0&q=85",
-        "category": "auth_background",
-        "description": "Architectural details with a bright blue sky, used for auth layout side panel"
-      }
-    ]
-  },
-  "motion": {
-    "hover": "Hover states on all interactive elements. Explicit text color on hover.",
-    "transitions": "Use transition-all duration-200 ease-in-out for buttons and list items."
-  },
-  "accessibility": {
-    "contrast": "Ensure text contrast against background. Focus states must have ring-2 ring-primary ring-offset-2.",
-    "testing": "All interactive and key informational elements MUST include a data-testid attribute (e.g., data-testid='add-activity-btn')."
+  "image_urls": {
+    "asset_placeholder_1": "https://images.unsplash.com/photo-1689942010216-dc412bb1e7a9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwzfHxpbmR1c3RyaWFsJTIwbWFjaGluZXJ5JTIwd2FyZWhvdXNlJTIwZXF1aXBtZW50JTIwYXNzZXR8ZW58MHx8fHwxNzg5MTMxNTk1fDA&ixlib=rb-4.1.0&q=85",
+    "asset_placeholder_2": "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwyfHxpbmR1c3RyaWFsJTIwbWFjaGluZXJ5JTIwd2FyZWhvdXNlJTIwZXF1aXBtZW50JTIwYXNzZXR8ZW58MHx8fHwxNzg5MTMxNTk1fDA&ixlib=rb-4.1.0&q=85",
+    "asset_placeholder_3": "https://images.unsplash.com/photo-1740914994657-f1cdffdc418e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHw0fHxpbmR1c3RyaWFsJTIwbWFjaGluZXJ5JTIwd2FyZWhvdXNlJTIwZXF1aXBtZW50JTIwYXNzZXR8ZW58MHx8fHwxNzg5MTMxNTk1fDA&ixlib=rb-4.1.0&q=85",
+    "asset_placeholder_4": "https://images.unsplash.com/photo-1717386255773-1e3037c81788?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwbWFjaGluZXJ5JTIwd2FyZWhvdXNlJTIwZXF1aXBtZW50JTIwYXNzZXR8ZW58MHx8fHwxNzg5MTMxNTk1fDA&ixlib=rb-4.1.0&q=85"
   },
   "instructions_to_main_agent": [
-    "Language: Spanish for all UI text.",
-    "Install 'Cabinet Grotesk' and 'IBM Plex Sans' via Google Fonts or standard imports.",
-    "Build the Gantt chart using custom HTML/Tailwind grids. Do not rely on complex external Gantt libraries if they are hard to customize; a flex/grid based bar chart is sufficient and more aligned with the Swiss design.",
-    "For the original vs modified Gantt, overlay a red bar (modified) over or below the blue bar (original) to easily compare the delay.",
-    "Activity dates must auto-calculate based on predecessor chain: Start = max(predecessor_end) + 1. If no predecessor, Start = Day 1.",
-    "Incidents add delays to the specific activity, which cascades to all successors."
+    "Language: Entire interface must be in Spanish (Activos, Solicitudes, Usuarios, Reportar problema, etc.).",
+    "Primary Color: Deep blue (#002699) used for primary buttons, active state highlights, key metrics, and brand header elements.",
+    "Data Test IDs: ALL interactive elements and text fields MUST have explicit data-testid attributes formatted in kebab-case (e.g., data-testid='login-email-input', data-testid='create-asset-button').",
+    "File Extensions: Remember all React source components are .js files (not .tsx).",
+    "QR Code Functionality: QR codes generated for assets must lead to the public responsive page `/p/asset/:qr_code` (or public asset view) with the 'REPORTAR PROBLEMA' button clearly prominent.",
+    "QR Printable Card: The QR detail view must feature a clean, styled modal/card designed for print (@media print) with Asset Code, Asset Name, Location, and printable QR code image.",
+    "Public Tracking Page: Public request tracking page must be accessible via public URL `/p/request/:token` showing correlative number (SOL-000001), status badge, asset info, timeline/history of status changes with date, time, and comments.",
+    "Status Timeline: Request detail page and public tracking page must present a vertical visual timeline component for status changes.",
+    "Sidebar Navigation: Authenticated views must have a responsive dark sidebar with brand logo, nav items with active indicator, user info footer, and logout button.",
+    "Toasts & Notifications: Use Sonner for toast notifications on asset creation, editing, request submission, and status updates."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Avoid generic centered slop layout. Use visual hierarchy, generous padding, sharp icons, clear borders, and high contrast typography.",
+    "Gradients on dark colors are forbidden. Keep solid dark slate/navy sidebar with crisp border-r border-slate-800.",
+    "Ensure every form field has explicit placeholder, helper text, and accessible validation feedback.",
+    "Ensure responsive design works flawlessly on mobile screens (<640px) with hamburger menu for sidebar and touch-friendly targets (min 44px height)."
   ]
 }

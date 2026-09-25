@@ -1,56 +1,38 @@
-# Gantt System - PRD
+# PRD — ActivoQR (Gestión de activos por QR + Solicitudes de mantenimiento)
 
-## Problem Statement
-Sistema para registrar actividades de Gantt con duraciones y predecesores (como en la página 1 del Excel), más registro de incidencias con días de retraso que generan un Gantt modificado (como en la página 2).
+## Problema original
+App web responsive y sencilla en español para gestionar activos mediante códigos QR y solicitudes de mantenimiento. 4 módulos: Activos, Usuarios, Códigos QR, Solicitudes. Flujo: Activo → QR → Reporte → Solicitud → Estado → Seguimiento.
 
-## Architecture
-- **Backend**: FastAPI + MongoDB (Motor), routes under `/api`
-- **Frontend**: React 19 + React Router + Tailwind + shadcn/ui
-- **Auth**: None (open system)
-- **Scheduling**: FS dependencies, start = max(pred.end) + 1 day, end = start + duration - 1
-- **Delay propagation**: Incidents sum per activity; modified schedule cascades to successors
+## Arquitectura
+- Backend: FastAPI + MongoDB (motor). Todas las rutas con prefijo `/api`.
+- Frontend: React 19 + React Router 7 + Tailwind + shadcn/ui + sonner.
+- Auth: JWT en cookie httpOnly (secure, samesite=none), `withCredentials`. Sin auto-registro; los admins crean usuarios.
+- QR: generado en backend con `qrcode` (PNG base64), codifica `{FRONTEND_URL}/a/{qr_token}` (token aleatorio, no IDs consecutivos).
+- Fotos: object storage de Emergent (máx 2 por entidad), servidas vía `/api/files/{path}`.
 
-## User Personas
-- Project Managers que gestionan cronogramas con dependencias
-- Coordinadores que documentan incidencias y necesitan ver impacto en el plan
+## Personas
+- ADMINISTRADOR: CRUD de activos, administra usuarios, ve y actualiza el estado de solicitudes.
+- USUARIO: visualiza activos y solicitudes (sin crear/editar).
+- Público (sin login): ve página del activo por QR, crea solicitud, consulta seguimiento por token.
 
-## Core Requirements (static)
-1. CRUD de Proyectos (multi-proyecto)
-2. CRUD de Actividades con múltiples predecesores
-3. CRUD de Incidencias con días de retraso
-4. Cálculo automático de fechas original + modificado
-5. Visualización Gantt: Original, Modificado, Comparación
-6. Dashboard con estadísticas (actividades, incidencias, retraso, duración)
+## Requisitos core (estáticos)
+- Activos: código único, nombre, descripción, categoría, ubicación, estado (Operativo/Con incidencia/En mantenimiento/Inactivo), fotos, fecha. Listado, búsqueda, filtros, crear, editar, detalle.
+- QR por activo: ver, descargar, imprimir. Página pública responsive con código/nombre/ubicación/estado + REPORTAR PROBLEMA.
+- Solicitudes: número correlativo SOL-000001, activo (bloqueado en form público), solicitante, email, descripción, foto, fecha, estado, historial. Estados: NUEVA/EN REVISIÓN/EN PROCESO/FINALIZADA. Link público de seguimiento por token.
+- Dashboard: total activos + conteos por estado + tabla de últimas solicitudes.
+- Seguridad: links públicos por token aleatorio; administración requiere auth.
 
-## Implemented (2026-02-06)
-- Backend endpoints: /api/projects, /api/activities, /api/incidents, /api/projects/{id}/gantt
-- Topological sort + FS scheduling with delay cascade
-- Frontend: Dashboard (proyectos), ProjectView (Tabs: Actividades, Incidencias, Gantt Original, Modificado, Comparación)
-- Custom Gantt chart with Tailwind flexbox bars (IKB blue + Signal red)
-- Stats cards + responsive layout
-- Swiss design (Cabinet Grotesk + IBM Plex Sans, #002FA7 primary, #FF2A00 accent)
+## Implementado (2026-06-11)
+- Auth JWT (login/logout/me) + seed de admin y 2 usuarios demo.
+- Módulos Activos, Usuarios, Solicitudes, QR completos + páginas públicas (activo, reporte, seguimiento).
+- Dashboard con métricas y tabla.
+- Datos demo: 10 activos, 3 usuarios, 8 solicitudes con estados variados.
+- Verificado por testing agent: backend 100% (17/17), frontend 100%. Role enforcement OK (403 backend + UI oculta).
 
-## Implemented (2026-02-27)
-- **Sticky Gantt Header**: Restructured `GanttChart.jsx` so the date header (timeline ticks) + "Actividad" column header remain visible (sticky top-0) when scrolling vertically through long activity lists. Implemented via synced horizontal scroll between an outer sticky header row (`overflow-x-hidden`) and the body scroll container (`overflow-x-auto`) using refs. Today's red line + "HOY" badge also propagated to the sticky header. Applies to all 3 modes (Original, Actual, Comparación).
-- **Inline editing of activities**: New reusable `EditableCell` component activated by double click; supports text/number/date. Inline-editable fields in `ProjectView.jsx` activities table: Nombre, Categoría, Duración, Inicio (`start_date`), Fin (`end_date`), Responsable. Estado y Progreso already inline. Save with Enter/blur, cancel with Escape. Generic `handleFieldUpdate` validates duration ≥1 and ISO date format.
-- **Dashboard – Pending Activities section**: New cross-project table on the home page (`PendingActivities.jsx`) listing activities with their project column. Four filter pills with counts: Pendientes (default, status ≠ Finalizado), Completadas, Pendientes de esta semana (activities overlapping current ISO week), Pendientes de la siguiente semana (activities starting next ISO week). Each row links to the project. Uses existing `/api/gantt-general` endpoint.
-- **Moved Pending Activities to own page + Project Director**: Pending Activities now lives at `/pending-activities` (`PendingActivitiesPage.jsx`); Dashboard hero restored with "Tus proyectos" as the main section. New "Actividades pendientes" button in the hero action bar links to it. New `director` field on Project model + `PUT /api/projects/{id}` endpoint + `updateProject` API helper. Director shown in every project card and editable from "Nuevo proyecto" dialog. Seeded directors: Carlos Mesia → Fintech, SSO, HRM Go Colombia, Logística Colombia; Carlos Gutarra → all other 9 projects.
+## Backlog priorizado
+- P1: Paginación en listados de activos/solicitudes.
+- P2: Bloqueo por fuerza bruta en login; notificación por email al solicitante al cambiar estado.
+- P2: Split de server.py en módulos si crece.
 
-## Test Coverage
-- 15/15 backend pytest cases pass
-- Frontend E2E Playwright run passes (canonical scenario A→B(+3d)→C verified)
-
-## Backlog
-### P1
-- Edit activity dialog (currently only create + delete)
-- Export Gantt to Excel/CSV (mimic original spreadsheet)
-- Editable project (rename, change start date)
-
-### P2
-- Drag & drop predecessor editing on Gantt
-- Filter/search in activities and incidents tables
-- Resource allocation per activity
-- Milestone markers on Gantt
-- Print-friendly Gantt view
-- Authentication + multi-user collaboration
-- Undo / version history of incidents
+## Credenciales
+Ver `/app/memory/test_credentials.md`.

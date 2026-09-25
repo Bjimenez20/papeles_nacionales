@@ -1,0 +1,32 @@
+{
+  "summary": "Iteration 8 — E2E test of new JWT Bearer auth + role-based service requests. Backend: 12/13 pytest passed, 1 skipped (no 'other-user' request available for cliente). Frontend Playwright: every review-request bullet verified live on preview URL. Cliente cannot see admin panel, cannot access /assets, sees only their own solicitudes; admin sees 18 rows including SRV+SOL, updates status which persists after reload; register flow, logout, role labels in header all work. Only carry-over issue: Radix DialogContent missing DialogTitle a11y warning on success modal (already flagged iteration 7).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Success modal on /nueva-solicitud", "issues": ["Still emits Radix a11y warning: `DialogContent` requires a `DialogTitle`. Wrap in VisuallyHidden or add a hidden title. (Carry-over from iteration 7 — main agent has not fixed.)"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_auth_roles.py",
+    "/app/test_reports/pytest/iteration_8.xml"
+  ],
+  "action_items": [
+    "(Minor a11y) Add a DialogTitle (visually hidden) inside the success-modal DialogContent in NuevaSolicitud.js to silence Radix a11y warning. This has been an open item since iteration 7."
+  ],
+  "critical_code_review_comments": [
+    "server.py `_can_view` uses raw dict field `email` (QR requests) vs `owner_email` (service). Consider a unified `owner_email` field on public reports linked-by-email so cliente listing/permissions stay in sync.",
+    "get_current_user still reads cookies AND Authorization header — fine, but doc/expected canonical scheme now is Bearer; consider dropping cookie code-path or documenting dual support.",
+    "server.py is 707 lines — near the 700-line refactor threshold; consider splitting auth/users/assets/requests/uploads into modules.",
+    "MisSolicitudes.js maps `s.origin === 'servicio' ? s.service_type : 'Mantenimiento'` — hard-codes 'Mantenimiento' for all QR reports which may be misleading if a QR report is really an audit/installation.",
+    "Frontend AuthContext exposes both `isAdmin` and `isCliente` but `isCliente = user && user.role !== 'admin'` — any non-admin role becomes 'cliente'. Fine today, but if a new role is introduced later this will be wrong."
+  ],
+  "updated_files": ["/app/backend/tests/test_auth_roles.py"],
+  "success_rate": {"backend": "100% (12/12 executed, 1 skipped)", "frontend": "100%"},
+  "test_credentials": "Admin carlos.mesia.22@gmail.com/Admin123!; Cliente cliente@demo.com/Cliente123! (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Cliente created 3 SRV-2026-00000X during test run; admin advanced one to 'Validación' with comment 'TEST admin advance'.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Auth is Bearer JWT via header (localStorage 'ot_token'); backend still accepts cookie too. Use /app/backend/tests/test_auth_roles.py as regression. Run: `python -m pytest backend/tests/test_auth_roles.py -o addopts= -v`. Frontend testids used: login-email-input, login-password-input, login-submit-button, logout-button, register-*, nav-activos, select-cliente/ubicacion/horario/dispensador, input-contacto/telefono/fecha/cantidad, btn-siguiente/btn-crear/btn-ver, success-codigo, view-codigo, estado-select/comentario, registrar-estado, request-status-badge, historial, mis-solicitudes, row-{codigo}, copy-track-button. Cliente@demo.com currently owns SRV-2026-000001..000005."
+}

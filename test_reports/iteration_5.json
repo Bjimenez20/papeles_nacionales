@@ -1,0 +1,26 @@
+{
+  "summary": "Frontend-only testing for the new SolicitudView (SRV service requests) admin state-update panel and QR-regression. All 6 requested flows pass end-to-end: (1) Wizard creates SRV via /nueva-solicitud → success modal with code SRV-2026-######, (2) 'Ver solicitud' navigates to /solicitud/{codigo}, view shows código, estado 'Solicitado', tracking-bar, and initial historial 'Solicitud creada'. (3) Admin panel visible (isAdmin auto-login) with estado-select (8 states), estado-comentario textarea, and registrar-estado button. (4) Updating to 'Programado' with comment → toast 'Estado actualizado', badge → 'Programado', tracking bar advanced, new historial entry added, and CHANGE PERSISTS after full page reload (localStorage). (5) SRV visible in /mis-solicitudes with 'Servicio' origin; clicking navigates to /solicitud/{codigo}. (6) QR regression: clicking SOL-000013 opens /requests/{id} with its 4-state (NUEVA/EN REVISIÓN/EN PROCESO/FINALIZADA) update panel intact.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Success modal (NuevaSolicitud) and other dialogs", "issues": ["Radix DialogContent console warnings: missing DialogTitle and Description/aria-describedby. Not blocking but hurts a11y."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Low priority a11y) Add DialogTitle (or VisuallyHidden wrapper) and aria-describedby/Description to the success modal in NuevaSolicitud.js and any other DialogContent lacking them."
+  ],
+  "critical_code_review_comments": [
+    "mockData.generarCodigo starts counter at 122 → first code is always SRV-2026-000123 for every new browser (localStorage). Fine for demo but worth flagging so testers/users aren't confused by repeated codes across devices.",
+    "SolicitudView flowIndex falls back to 0 when estado is unknown; consider surfacing an inline warning if estado is not in ESTADOS_FLUJO.",
+    "actualizarSolicitud silently returns null when código not found — SolicitudView doesn't handle null on registrar (unlikely path since it's guarded by !s early-return, but worth defensive check)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100%"},
+  "seed_data_creation": "Created ephemeral SRV-2026-000123 via wizard in localStorage as part of the test run.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "SRV service requests live entirely in browser localStorage (keys: ot_solicitudes, ot_counter). Counter default 122 → first SRV code is SRV-2026-000123. Auto-login is admin (isAdmin true) so the admin state-update panel renders. shadcn Select needs ~200-300ms after opening before clicking options (force=True). QR reports still use backend /api endpoints and RequestDetail page (/requests/{id}) — unaffected by this change."
+}
